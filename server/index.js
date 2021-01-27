@@ -1,4 +1,3 @@
-const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 const cors = require('cors');
@@ -6,8 +5,12 @@ const cors = require('cors');
 const router = require('./router');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
+
+var port = process.env.PORT || 4000;
+const server = app.listen(port, () => {
+  console.log(`Listening on: ${port}`);
+});
+io = socketio(server, { origins: '*:*' })
 
 
 
@@ -23,7 +26,7 @@ app.use(cors());
 app.use(router);
 
 
-io.on('connection', (socket) => {
+io.on('connect', (socket) => {
 
 
     socket.on('join', (({ name, room }) => {
@@ -40,6 +43,3 @@ io.on('connection', (socket) => {
     })
 
 })
-
-
-server.listen(process.env.PORT || 4000, () => console.log(`Server has started. on port 4000`));
